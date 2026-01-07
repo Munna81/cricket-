@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: transparent;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.scorebox {
+  width: 600px;
+  background: #0b3d91;
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.team {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.score {
+  font-size: 28px;
+  margin: 5px 0;
+}
+
+.over {
+  font-size: 20px;
+  opacity: 0.9;
+}
+
+.loading {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.error {
+  font-size: 18px;
+  color: #ffb3b3;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
