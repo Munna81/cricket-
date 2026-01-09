@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Live Cricket Score</title>
+
+<style>
+body {
+  margin: 0;
+  background: transparent;
+  font-family: Arial, sans-serif;
+}
+
+.scorebox {
+  width: 600px;
+  background: #0b3d91;
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.team {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.score {
+  font-size: 28px;
+}
+
+.over {
+  font-size: 20px;
+  opacity: 0.9;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scorebox" id="score">
+  Loading Live Score...
+</div>
+
+<script>
+async function loadScore() {
+
+  const response = await fetch("https://api.cricapi.com/v1/match_info?apikey=62035dbd-5297-4ee5-9e64-971e795d4b67&id=ea479cff-ddbe-48e0-9e4a-528f61a8a175", {
+    headers: {
+      "X-RapidAPI-Key": "62035dbd-5297-4ee5-9e64-971e795d4b67",
+      "X-RapidAPI-Host": "ea479cff-ddbe-48e0-9e4a-528f61a8a175"
+    }
+  });
+
+  const data = await response.json();
+
+  document.getElementById("score").innerHTML = `
+    <div class="team">${data.team1}</div>
+    <div class="score">${data.score1}</div>
+    <div class="over">Overs: ${data.over1}</div>
+    <br>
+    <div class="team">${data.team2}</div>
+    <div class="score">${data.score2}</div>
+  `;
+}
+
+loadScore();
+setInterval(loadScore, 15000); // auto update 15 sec
+</script>
+
+</body>
+</html>

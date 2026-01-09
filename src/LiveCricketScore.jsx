@@ -1,61 +1,71 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LiveCricketScore.css";
 
-export default function LiveCricketScore() {
-  const [score, setScore] = useState(null);
-  const [error, setError] = useState(false);
-
-  const loadScore = async () => {
-    try {
-      const response = await fetch(
-        "62035dbd-5297-4ee5-9e64-971e795d4b67"
-      );
-
-      const data = await response.json();
-
-      setScore({
-        team1: data.team1,
-        score1: data.score1,
-        over1: data.over1,
-        team2: data.team2,
-        score2: data.score2,
-      });
-    } catch (err) {
-      setError(true);
-    }
-  };
+const LiveCricketScore = () => {
+  const [matches, setMatches] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadScore();
-    const interval = setInterval(loadScore, 15000);
-    return () => clearInterval(interval);
+    fetch(
+      "https://api.cricapi.com/v1/currentMatches?apikey=62035dbd-5297-4ee5-9e64-971e795d4b67&offset=0"
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        setMatches(result.data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
 
+  if (loading) return <div className="loading">Loading...</div>;
+
   return (
-    <div className="page">
-      <div className="scorebox">
-        {!score && !error && (
-          <div className="loading">Loading Live Score...</div>
-        )}
+    <div className="scoreboard">
+      {matches.map((match) => (
+        <div className="match-card" key={match.id}>
+          {/* Header */}
+          <div className="match-header">
+            <span className="match-type">{match.matchType.toUpperCase()}</span>
+            <span className="match-status">{match.status}</span>
+          </div>
 
-        {error && (
-          <div className="error">Failed to load score</div>
-        )}
+          {/* Teams */}
+          <div className="teams">
+            <div className="team">
+              <img src={match.teamInfo[0]?.img} alt="" />
+              <h3>{match.teamInfo[0]?.name}</h3>
+            </div>
 
-        {score && (
-          <>
-            <div className="team">{score.team1}</div>
-            <div className="score">{score.score1}</div>
-            <div className="over">Overs: {score.over1}</div>
+            <span className="vs">VS</span>
 
-            <hr />
+            <div className="team">
+              <img src={match.teamInfo[1]?.img} alt="" />
+              <h3>{match.teamInfo[1]?.name}</h3>
+            </div>
+          </div>
 
-            <div className="team">{score.team2}</div>
-            <div className="score">{score.score2}</div>
-          </>
-        )}
-      </div>
+          {/* Scores */}
+          <div className="scores">
+            {match.score?.map((inning, index) => (
+              <p key={index}>
+                <strong>{inning.inning}</strong>: {inning.r}/{inning.w} (
+                {inning.o} ov)
+              </p>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div className="match-footer">
+            <p>{match.venue}</p>
+            <p>{match.date}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
-}
+};
 
+export default LiveCricketScore;
